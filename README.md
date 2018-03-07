@@ -3,18 +3,19 @@ This is the fifth and final project for the Udacity [Full Stack Developer Nanode
 
 ## About
 
-In this project, we configure a brand-new, bare bones, Linux server into a secure and efficient web server capable of hosting the [Item Catalog Webapp](https://github.com/fabioderendinger/item-catalog). More precisely, we will
+In this project, we configure a brand-new, bare bones, Linux server into a secure and efficient web server capable of hosting the [Item Catalog Webapp](https://github.com/fabioderendinger/item-catalog).
+More precisely, we will
 - create an Amazon Lightsail instance with bare bonnes Ubuntu image installed
 - secure the server from a number of attack vectors
 - install and configure a database server
 - deploy the Item Catalog project
 
-Visit http://ec2-18-197-97-251.eu-central-1.compute.amazonaws.com the view the deployed web application.
+Visit http://ec2-18-197-97-251.eu-central-1.compute.amazonaws.com to view the deployed web application.
 
 ## Step-by-Step Guide
-### Create Amazon Lightsail instance
+### Create an Amazon Lightsail instance
 1. Sign-up for Amazon Lightsail and create a new instance with a bare bones Ubuntu image installed
-2. Download the Key-Pair file, rename it to "lightsail_default.pem" and placed in `C:/User/yourusername/.ssh/`
+2. Download the Key-Pair file, rename it to "lightsail_default.pem" and place it in `C:/User/yourusername/.ssh/`
 
 ### First time login through ssh
 (Note: only for first time connection. Port is changed from 22 to 2200 afterwards)
@@ -39,18 +40,18 @@ Visit http://ec2-18-197-97-251.eu-central-1.compute.amazonaws.com the view the d
 
 Now we are able to log into the remote VM through ssh with the following command: `$ ssh ubuntu@18.197.97.251 -p 2200 -i ~/.ssh/lightsail_default.pem`.
 
-### Create a new user named Grader and grant this user sudo permissions
+### Create a new user named `Grader` and grant this user sudo permissions
 1. `$ sudo apt-get install finger`
 2. `$ sudo adduser grader`. The password is set to: `grader`.
-Next, we want to give sudo permission to the user grader:
+Next, we want to give sudo permission to the user `grader`:
 3. `$ sudo touch /etc/sudoers.d/grader`
 4. `$ sudo nano /etc/sudoers.d/grader`. Add the following line the the file: `grader ALL=(ALL) NOPASSWD:ALL`.
 
-### Create Key-Pair for Grader (to be done locally!)
+### Create Key-Pair for user `Grader` (to be done locally!)
 1. Open up a new bash window
 2. `$ ssh-keygen`. If not specified, the generated puplic and private key will be stored in `/c/User/yourusername/.ssh/`.
 
-### Configure the key-based authentication for the user Grader
+### Configure the key-based authentication for the user `Grader`
 Back in the bash window connected to the remote server:
 1. `$ cd /home/grader`
 2. `$ sudo mkdir .ssh`
@@ -60,7 +61,7 @@ Next, we change the owner of the `.ssh` folder and `authorized_keys` file to Gra
 5. `$ sudo chown grader:grader .ssh/authorized_keys`
 6. `$ sudo chown grader:grader .ssh`
 
-(Now we would be able to log into the remote VM as user Grader through ssh with the following command: `$ ssh grader@18.197.97.251 -p 2200 -i ~/.ssh/id_rsa`)
+(Now we would be able to log into the remote VM as user `Grader` through ssh with the following command: `$ ssh grader@18.197.97.251 -p 2200 -i ~/.ssh/id_rsa`)
 
 ### Set the local timezone to UTC
 1. `$ sudo dpkg-reconfigure tzdata`. Select `none of the above`; `UTC`.
@@ -78,10 +79,10 @@ Next, we change the owner of the `.ssh` folder and `authorized_keys` file to Gra
 1. `$ sudo apt-get install postgresql postgresql-contrib`. By installing PostgreSQL, a new Ubuntu user with the name `postgres` is automatically created.
 2. `$ sudo nano /etc/postgresql/9.5/main/pg_hba.conf`. To prevent potential attacks from the outer world we double check that no remote connections to the database are allowed.
 3. Authenticate as PostgrSQL: `$ sudo -i -u postgres`
-4. `$ createuser --interactive`. Name: `catalog`; Answer to subsequent questions: `n`; `n`; `n`;
-5. `$ createdb catalog`
+4. Create a PostgrSQL database user (not Ubuntu user) that has limited permissions to our catalog application database:`$ createuser --interactive`. Name: `catalog`; Answer to subsequent questions: `n`; `n`; `n`;
+5. Create a PostgrSQL datbase named `catalog`: `$ createdb catalog`
 6. `$ psql`
-7. `$ ALTER USER catalog WITH PASSWORD 'fakepw';`. This sets a password for the user 'catalog'. Close the psql console with `\q`.
+7. `$ ALTER USER catalog WITH PASSWORD 'fakepw';`. This sets a password for the user `catalog`. Close the psql console with `\q`.
 6. `$ exit`
 
 ### Install git, clone and setup the Catalog App project
@@ -92,6 +93,7 @@ Next, we change the owner of the `.ssh` folder and `authorized_keys` file to Gra
 5. `$ sudo mv item-catalog itemcatalog`
 6. `$ cd itemcatalog`
 7. Rename the main python file of the app to `__init__.py`: `$ sudo mv views.py __init__.py`. By doing so, the directory `itemcatalog` is considered to be a python module and the command `from itemcatalog import app as application` in the `itemcatalog.wsgi` file is correctly interpreted.
+Next, we need update the database connection information in our python files to make sure our app can connect to the correct database (the one we created above). We use `engine = create_engine('postgresql://dbuser:userpw@localhost/dbname')` with dbuser equal to `catalog` (the database user from which the application access the database), userpw equal to `fakepw` (the pw we set for the database user `catalog`) and dbname equal to `catalog` (the name of the database we want to connect to):
 8. `$ sudo nano database_setup.py`. Change the line `create_engine('sqlite:///itemcatalog.db')` to `engine = create_engine('postgresql://catalog:fakepw@localhost/catalog')`.
 9. `$ sudo nano views.py`. Change the line `create_engine('sqlite:///itemcatalog.db')` to `engine = create_engine('postgresql://catalog:fakepw@localhost/catalog')`.
 10. `$ sudo nana defaultcatalog.py`. Change the line `create_engine('sqlite:///itemcatalog.db')` to `engine = create_engine('postgresql://catalog:fakepw@localhost/catalog')`.
@@ -122,7 +124,8 @@ application.config['UPLOAD_FOLDER'] = '/var/www/FlaskApp/itemcatalog/static/img/
 
 ### Configure and enable a new virtual host
 1. Create a virtual host conifg file: `$ sudo nano /etc/apache2/sites-available/itemcatalog.conf`. Paste in the following lines of code:
-```<VirtualHost *:80>
+```
+<VirtualHost *:80>
         ServerName 18.197.97.251
         ServerAlias http://ec2-18-197-97-251.eu-central-1.compute.amazonaws.com/
         WSGIScriptAlias / /var/www/FlaskApp/itemcatalog.wsgi
@@ -149,9 +152,11 @@ Apache is run as the user www-data. Hence we need to provide this user with the 
 ### Update the OAuth configuration
 **Google OAuth**
 1. Update the fields `javascript_origins` and `redirect_uris` in the Google `client_secrets.json` file with the respective AWS assigend URLs (use domain names, not IP addresses): `$ sudo nano /var/www/FlaskApp/itemcatalog/client_secrets.json`
-2. Change the relative paths to absolute paths in the `__init__.py` file
+2. These addresses also need to be entered into the Google Developers Console -> API Manager -> Credentials
+3. Change the relative paths to absolute paths in the `__init__.py` file
     - `$ sudo nano /var/www/FlaskApp/itemcatalog/__init__.py`
     - Replace `client_secrets.json` with `/var/www/FlaskApp/itemcatalog/client_secrets.json` everywhere
+
 
 **Facebook OAuth**
 1. Change the relative paths to absolute paths in the `__init__.py` file
@@ -159,11 +164,11 @@ Apache is run as the user www-data. Hence we need to provide this user with the 
     - Replace `fb_client_secrets.json` with `/var/www/FlaskApp/itemcatalog/fb_client_secrets.json` everywhere
 
 ## Error Resolution
-In case the browers returns an error you should consult the Error Log file to identify the root cause:
+In case the browers returns an error, you should consult the Error Log file to identify the root cause:
 1. `$ cd /var/log/apache2`
 2. `$ cat 'error.log'`
 
-If you get the error `(psycopg2.InternalError) current transaction is aborted, commands ignored until end of transaction block` try to re-create the database `category` from scratch:
+If you get the error `(psycopg2.InternalError) current transaction is aborted, commands ignored until end of transaction block`, try to re-create the database `category` from scratch:
 1. `$ Drop and re-create the database catalog`
     - `$ sudo -i -u postgres`
     - In psql console (open console with `$ psql`): `$ SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='catalog';`. This command should remove all connections to the database. Close the psql console with `\q`.
