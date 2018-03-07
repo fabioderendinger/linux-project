@@ -4,6 +4,7 @@ This is the fifth and final project for the Udacity [Full Stack Developer Nanode
 ## About
 
 In this project, we configure a brand-new, bare bones, Linux server into a secure and efficient web server capable of hosting the [Item Catalog Webapp](https://github.com/fabioderendinger/item-catalog).
+
 More precisely, we will:
 - create an Amazon Lightsail instance with bare bonnes Ubuntu image installed
 - secure the server from a number of attack vectors
@@ -43,6 +44,7 @@ Now we are able to log into the remote VM through ssh with the following command
 ### Create a new user named `Grader` and grant this user sudo permissions
 1. `$ sudo apt-get install finger`
 2. `$ sudo adduser grader`. The password is set to: `grader`.
+
 Next, we want to give sudo permission to the user `grader`:
 3. `$ sudo touch /etc/sudoers.d/grader`
 4. `$ sudo nano /etc/sudoers.d/grader`. Add the following line the the file: `grader ALL=(ALL) NOPASSWD:ALL`.
@@ -57,6 +59,7 @@ Back in the bash window connected to the remote server:
 2. `$ sudo mkdir .ssh`
 3. `$ sudo touch .ssh/authorized_keys`
 4. `$ sudo nano .ssh/authorized_keys`. Paste the public key generated above into the authorized_key file.
+
 Next, we change the owner of the `.ssh` folder and `authorized_keys` file to Grader
 5. `$ sudo chown grader:grader .ssh/authorized_keys`
 6. `$ sudo chown grader:grader .ssh`
@@ -93,6 +96,7 @@ Next, we change the owner of the `.ssh` folder and `authorized_keys` file to Gra
 5. `$ sudo mv item-catalog itemcatalog`
 6. `$ cd itemcatalog`
 7. Rename the main python file of the app to `__init__.py`: `$ sudo mv views.py __init__.py`. By doing so, the directory `itemcatalog` is considered to be a python module and the command `from itemcatalog import app as application` in the `itemcatalog.wsgi` file is correctly interpreted.
+
 Next, we need update the database connection information in our python files to make sure our app can connect to the correct database (the one we created above). We use `engine = create_engine('postgresql://dbuser:userpw@localhost/dbname')` with dbuser equal to `catalog` (the database user from which the application access the database), userpw equal to `fakepw` (the pw we set for the database user `catalog`) and dbname equal to `catalog` (the name of the database we want to connect to):
 8. `$ sudo nano database_setup.py`. Change the line `create_engine('sqlite:///itemcatalog.db')` to `engine = create_engine('postgresql://catalog:fakepw@localhost/catalog')`.
 9. `$ sudo nano views.py`. Change the line `create_engine('sqlite:///itemcatalog.db')` to `engine = create_engine('postgresql://catalog:fakepw@localhost/catalog')`.
