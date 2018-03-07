@@ -183,3 +183,8 @@ If you get the error `(psycopg2.InternalError) current transaction is aborted, c
     - `$ createdb catalog`
     - Re-populate the database with the default items (run `defaultcatalog.py` file)
 2. `$ sudo service apache2 restart`
+
+## Resources
+[Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps)
+[Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04)
+[Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-secure-postgresql-on-an-ubuntu-vps)
