@@ -61,6 +61,7 @@ Back in the bash window connected to the remote server:
 4. `$ sudo nano .ssh/authorized_keys`. Paste the public key generated above into the authorized_key file.
 
 Next, we change the owner of the `.ssh` folder and `authorized_keys` file to Grader
+
 5. `$ sudo chown grader:grader .ssh/authorized_keys`
 6. `$ sudo chown grader:grader .ssh`
 
@@ -98,6 +99,7 @@ Next, we change the owner of the `.ssh` folder and `authorized_keys` file to Gra
 7. Rename the main python file of the app to `__init__.py`: `$ sudo mv views.py __init__.py`. By doing so, the directory `itemcatalog` is considered to be a python module and the command `from itemcatalog import app as application` in the `itemcatalog.wsgi` file is correctly interpreted.
 
 Next, we need update the database connection information in our python files to make sure our app can connect to the correct database (the one we created above). We use `engine = create_engine('postgresql://dbuser:userpw@localhost/dbname')` with dbuser equal to `catalog` (the database user from which the application access the database), userpw equal to `fakepw` (the pw we set for the database user `catalog`) and dbname equal to `catalog` (the name of the database we want to connect to):
+
 8. `$ sudo nano database_setup.py`. Change the line `create_engine('sqlite:///itemcatalog.db')` to `engine = create_engine('postgresql://catalog:fakepw@localhost/catalog')`.
 9. `$ sudo nano views.py`. Change the line `create_engine('sqlite:///itemcatalog.db')` to `engine = create_engine('postgresql://catalog:fakepw@localhost/catalog')`.
 10. `$ sudo nana defaultcatalog.py`. Change the line `create_engine('sqlite:///itemcatalog.db')` to `engine = create_engine('postgresql://catalog:fakepw@localhost/catalog')`.
