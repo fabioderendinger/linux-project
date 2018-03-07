@@ -4,7 +4,7 @@ This is the fifth and final project for the Udacity [Full Stack Developer Nanode
 ## About
 
 In this project, we configure a brand-new, bare bones, Linux server into a secure and efficient web server capable of hosting the [Item Catalog Webapp](https://github.com/fabioderendinger/item-catalog).
-More precisely, we will
+More precisely, we will:
 - create an Amazon Lightsail instance with bare bonnes Ubuntu image installed
 - secure the server from a number of attack vectors
 - install and configure a database server
@@ -18,7 +18,7 @@ Visit http://ec2-18-197-97-251.eu-central-1.compute.amazonaws.com to view the de
 2. Download the Key-Pair file, rename it to "lightsail_default.pem" and place it in `C:/User/yourusername/.ssh/`
 
 ### First time login through ssh
-(Note: only for first time connection. Port is changed from 22 to 2200 afterwards)
+(Note: only for first time login. Port is changed from 22 to 2200 afterwards)
 1. Log into the remote VM through ssh: `$ ssh ubuntu@18.197.97.251 -p 22 -i ~/.ssh/lightsail_default.pem`.
 
 ### Update all currently installed packages
