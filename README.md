@@ -46,6 +46,7 @@ Now we are able to log into the remote VM through ssh with the following command
 2. `$ sudo adduser grader`. The password is set to: `grader`.
 
 Next, we want to give sudo permission to the user `grader`:
+
 3. `$ sudo touch /etc/sudoers.d/grader`
 4. `$ sudo nano /etc/sudoers.d/grader`. Add the following line the the file: `grader ALL=(ALL) NOPASSWD:ALL`.
 
